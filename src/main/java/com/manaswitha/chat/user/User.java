@@ -1,4 +1,4 @@
-package com.manaswitha.chat;
+package com.manaswitha.chat.user;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity; // Import the Entity class

@@ -1,4 +1,4 @@
-package com.manaswitha.chat;
+package com.manaswitha.chat.user;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
