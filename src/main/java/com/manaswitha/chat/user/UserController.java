@@ -1,4 +1,4 @@
-package com.manaswitha.chat;
+package com.manaswitha.chat.user;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.manaswitha.chat.ResourceNotFoundException;
 import jakarta.validation.Valid;
 
 @RestController

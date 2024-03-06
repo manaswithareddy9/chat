@@ -1,4 +1,4 @@
-package com.manaswitha.chat;
+package com.manaswitha.chat.user;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity; // Import the Entity class
@@ -29,7 +29,7 @@ public class User {
 	@JsonProperty("full_name")
 	private String fullName;
 
-	@Column(name = "user_name", nullable = false)
+	@Column(name = "user_name", nullable = false, unique = true)
 	@JsonProperty("user_name")
 	private String userName;
 
