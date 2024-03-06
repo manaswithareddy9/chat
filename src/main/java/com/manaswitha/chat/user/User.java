@@ -29,7 +29,7 @@ public class User {
 	@JsonProperty("full_name")
 	private String fullName;
 
-	@Column(name = "user_name", nullable = false)
+	@Column(name = "user_name", nullable = false, unique = true)
 	@JsonProperty("user_name")
 	private String userName;
 
