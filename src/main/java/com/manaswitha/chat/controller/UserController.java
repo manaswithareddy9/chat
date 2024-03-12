@@ -1,4 +1,4 @@
-package com.manaswitha.chat.user;
+package com.manaswitha.chat.controller;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -6,7 +6,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,8 +19,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.manaswitha.chat.ResourceNotFoundException;
+import com.manaswitha.chat.entity.User;
+import com.manaswitha.chat.repository.UserRepository;
+
 import jakarta.validation.Valid;
 
+@CrossOrigin(origins = "http://localhost:8081")
 @RestController
 @RequestMapping("/api/v1")
 public class UserController {
@@ -31,16 +37,17 @@ public class UserController {
 	}
 
 	@GetMapping("/users/{id}")
-	public ResponseEntity<User> getUserById(@PathVariable(value = "id") long userId)
-			throws ResourceNotFoundException {
+	public ResponseEntity<User> getUserById(@PathVariable(value = "id") long userId) throws ResourceNotFoundException {
 		User user = userRepository.findById(userId)
 				.orElseThrow(() -> new ResourceNotFoundException("User not found for this id :: " + userId));
-		return ResponseEntity.ok().body(user);
+		return new ResponseEntity<>(user, HttpStatus.OK);
 	}
 
 	@PostMapping("/users")
-	public User createUser(@Valid @RequestBody User user) {
-		return userRepository.save(user);
+	public ResponseEntity<User> createUser(@Valid @RequestBody User user) {
+		User users = userRepository
+				.save(user);
+		return new ResponseEntity<>(users, HttpStatus.CREATED);
 	}
 
 	@PutMapping("/users/{id}")
@@ -69,5 +76,20 @@ public class UserController {
 		response.put("deleted", Boolean.TRUE);
 		return response;
 	}
+
+	// To Do: query param to fetch users by userName
+	// @GetMapping("/users/{userName}")
+	// public ResponseEntity<User> getUserByUserName(@PathVariable(value =
+	// "userName") String userName)
+	// throws ResourceNotFoundException {
+	// Optional<User> user =
+	// userRepository.findByUserNameContaining(userName).stream().findFirst();
+	// if (user.isPresent()) {
+	// return new ResponseEntity<>(user.get(), HttpStatus.OK);
+	// } else {
+	// throw new ResourceNotFoundException("User not found with this userName :: " +
+	// userName);
+	// }
+	// }
 
 }
