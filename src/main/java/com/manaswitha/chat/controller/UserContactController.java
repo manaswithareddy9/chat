@@ -79,19 +79,18 @@ public class UserContactController {
 		return new ResponseEntity<>(userContactModel, HttpStatus.CREATED);
 	}
 
-	@PutMapping("/userContacts/{userId}")
-	public ResponseEntity<UserContactModel> updateUserContact(@PathVariable(value = "userId") long userId,
+	@PutMapping("/userContacts/{id}")
+	public ResponseEntity<UserContactModel> updateUserContact(@PathVariable(value = "id") long userContactId,
 			@Valid @RequestBody UserContact userContactDetails) throws ResourceNotFoundException {
-		UserContact userContacts = userContactRepository.findByUserId(userId).stream().findFirst()
-				.orElseThrow(() -> new ResourceNotFoundException("UserContact not found for this userId :: " + userId));
+		UserContact userContacts = userContactRepository.findById(userContactId).stream().findFirst()
+				.orElseThrow(() -> new ResourceNotFoundException("UserContact not found for this userContactId :: " + userContactId));
 
-		userContacts.setUser(userContactDetails.getUser());
+		// userContacts.setUser(userContactDetails.getUser());
 		userContacts.setPhoneNumber(userContactDetails.getPhoneNumber());
 		userContacts.setEmailId(userContactDetails.getEmailId());
 		userContacts.setUpdatedAt(new Date());
-		// userContacts.setUserId(userId);
 		final UserContact updatedUserContact = userContactRepository.save(userContacts);
-		UserContactModel userContactModel = new UserContactModel(updatedUserContact.getUser().getId(), userId,
+		UserContactModel userContactModel = new UserContactModel(userContactId, updatedUserContact.getUser().getId(),
 		updatedUserContact.getPhoneNumber(), updatedUserContact.getEmailId(), updatedUserContact.getCreatedAt(),
 		updatedUserContact.getUpdatedAt());
 		return ResponseEntity.ok(userContactModel);
