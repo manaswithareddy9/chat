@@ -1,0 +1,192 @@
+{
+	"info": {
+		"_postman_id": "28d4b44e-216f-4ef5-8998-d58c14900a55",
+		"name": "chat-loop",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "33041754"
+	},
+	"item": [
+		{
+			"name": "Create User",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"let random = +new Date();",
+							"",
+							"let first_name = `${random}-first`",
+							"let last_name = `${random}-last`",
+							"let full_name = `${random}-full`",
+							"",
+							"pm.globals.set(\"first_name\", first_name);",
+							"pm.globals.set(\"last_name\", last_name);",
+							"pm.globals.set(\"full_name\", full_name);",
+							"pm.globals.set(\"user_name\", random);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"User creation was successful\", function () {",
+							"  pm.expect(pm.response.code).to.be.oneOf([200]);",
+							"});",
+							"",
+							"var responseJson = pm.response.json()",
+							"",
+							"var user_id = responseJson[\"id\"]",
+							"",
+							"//set variables",
+							"if(user_id){",
+							"    console.log('Created: User with id = ' + user_id)",
+							"    console.log('Next: GET User for id = ' + user_id)",
+							"    pm.globals.set(\"user_id\", user_id);",
+							"}",
+							"",
+							"// postman.setNextRequest('Get User')",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"first_name\": \"{{first_name}}\",\n    \"last_name\": \"{{last_name}}\",\n    \"full_name\": \"{{full_name}}\",\n    \"user_name\": \"{{user_name}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/v1/users",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"v1",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get User",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// postman.setNextRequest('Update User')"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": []
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/v1/users/{{user_id}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"v1",
+						"users",
+						"{{user_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update User",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"let random = +new Date();",
+							"",
+							"let first_name = `${random}-first`",
+							"let last_name = `${random}-last`",
+							"let full_name = `${random}-full`",
+							"",
+							"pm.globals.set(\"random_val\", random);",
+							"pm.globals.set(\"first_name\", first_name);",
+							"pm.globals.set(\"last_name\", last_name);",
+							"pm.globals.set(\"full_name\", full_name);",
+							"pm.globals.set(\"user_name\", random);"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"User Updated successful\", function () {",
+							"  pm.expect(pm.response.code).to.be.oneOf([200]);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"first_name\": \"{{first_name}}--updated\",\n    \"last_name\": \"{{last_name}}--updated\",\n    \"full_name\": \"{{full_name}}--updated\",\n    \"user_name\": \"{{user_name}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/v1/users/{{user_id}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"v1",
+						"users",
+						"{{user_id}}"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
