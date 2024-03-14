@@ -11,8 +11,6 @@ import com.manaswitha.chat.entity.UserContact;
 @Repository
 @Transactional
 public interface UserContactRepository extends JpaRepository<UserContact, Long> {
-    List<UserContact> findByUserId(Long userId);
-
     List<UserContact> findUserContactByUserId(Long userId);
 
     List<UserContact> deleteByUserId(Long userId);

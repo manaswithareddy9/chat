@@ -29,7 +29,7 @@ public class UserModel {
 	public UserModel() {
 
 	}
-	
+
 	public UserModel(long id, String firstName, String lastName, String fullName, String userName, Date createdAt,
 			Date updatedAt) {
 		this.id = id;
@@ -102,7 +102,5 @@ public class UserModel {
 		return "UserModel [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", fullName=" + fullName
 				+ ", userName=" + userName + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + "]";
 	}
-
-	
 
 }

@@ -1,11 +1,11 @@
 package com.manaswitha.chat.entity;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.Entity; // Import the Entity class
+import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Table;
-import jakarta.persistence.Id; // Import the Id class
+import jakarta.persistence.Id;
 import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonProperty;

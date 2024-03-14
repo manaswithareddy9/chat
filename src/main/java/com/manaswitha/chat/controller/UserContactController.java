@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.manaswitha.chat.ResourceNotFoundException;
-import com.manaswitha.chat.entity.User;
 import com.manaswitha.chat.entity.UserContact;
 import com.manaswitha.chat.model.UserContactModel;
 import com.manaswitha.chat.repository.UserContactRepository;
@@ -49,7 +48,7 @@ public class UserContactController {
 			throws ResourceNotFoundException {
 		userRepository.findById(userId)
 				.orElseThrow(() -> new ResourceNotFoundException("User not found for this id :: " + userId));
-		List<UserContact> contacts = userContactRepository.findByUserId(userId);
+		List<UserContact> contacts = userContactRepository.findUserContactByUserId(userId);
 		return new ResponseEntity<>(contacts, HttpStatus.OK);
 
 	}
@@ -75,7 +74,6 @@ public class UserContactController {
 		UserContactModel userContactModel = new UserContactModel(userContact.getUser().getId(), userId,
 				userContact.getPhoneNumber(), userContact.getEmailId(), userContact.getCreatedAt(),
 				userContact.getUpdatedAt());
-		// userContact.setUserId(userId);
 		return new ResponseEntity<>(userContactModel, HttpStatus.CREATED);
 	}
 
@@ -83,16 +81,15 @@ public class UserContactController {
 	public ResponseEntity<UserContactModel> updateUserContact(@PathVariable(value = "id") long userContactId,
 			@Valid @RequestBody UserContact userContactDetails) throws ResourceNotFoundException {
 		UserContact userContacts = userContactRepository.findById(userContactId).stream().findFirst()
-				.orElseThrow(() -> new ResourceNotFoundException("UserContact not found for this userContactId :: " + userContactId));
-
-		// userContacts.setUser(userContactDetails.getUser());
+				.orElseThrow(() -> new ResourceNotFoundException(
+						"UserContact not found for this userContactId :: " + userContactId));
 		userContacts.setPhoneNumber(userContactDetails.getPhoneNumber());
 		userContacts.setEmailId(userContactDetails.getEmailId());
 		userContacts.setUpdatedAt(new Date());
 		final UserContact updatedUserContact = userContactRepository.save(userContacts);
 		UserContactModel userContactModel = new UserContactModel(userContactId, updatedUserContact.getUser().getId(),
-		updatedUserContact.getPhoneNumber(), updatedUserContact.getEmailId(), updatedUserContact.getCreatedAt(),
-		updatedUserContact.getUpdatedAt());
+				updatedUserContact.getPhoneNumber(), updatedUserContact.getEmailId(), updatedUserContact.getCreatedAt(),
+				updatedUserContact.getUpdatedAt());
 		return ResponseEntity.ok(userContactModel);
 	}
 

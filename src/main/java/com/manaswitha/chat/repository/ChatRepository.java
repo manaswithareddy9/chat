@@ -7,14 +7,12 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.manaswitha.chat.entity.Chat;
-import com.manaswitha.chat.entity.UserContact;
+import com.manaswitha.chat.model.ChatModel;
 
 @Repository
 @Transactional
 public interface ChatRepository extends JpaRepository<Chat, Long> {
-    // List<Chat> findByUserId(Long userId);
+    List<ChatModel> findChatByFromUserContactId(Long fromUserContactId);
 
-    // List<Chat> findUserContactByUserId(Long userId);
-
-    // List<Chat> deleteByUserId(Long userId);
+    List<ChatModel> deleteByFromUserContactId(Long fromUserContactId);
 }

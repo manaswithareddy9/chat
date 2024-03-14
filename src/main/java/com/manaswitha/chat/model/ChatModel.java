@@ -3,7 +3,6 @@ package com.manaswitha.chat.model;
 import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.manaswitha.chat.entity.UserContact;
 
 public class ChatModel {
 
@@ -90,6 +89,6 @@ public class ChatModel {
 	public String toString() {
 		return "ChatModel [id=" + id + ", fromUserContactId=" + fromUserContactId + ", toUserContactId="
 				+ toUserContactId + ", text=" + text + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + "]";
-	}	
+	}
 
 }
