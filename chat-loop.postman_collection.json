@@ -1,8 +1,9 @@
 {
 	"info": {
-		"_postman_id": "e14a7b6e-04db-4fa0-9464-372b2f7ac6f0",
+		"_postman_id": "28d4b44e-216f-4ef5-8998-d58c14900a55",
 		"name": "chat-loop",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "33041754"
 	},
 	"item": [
 		{
@@ -11,7 +12,6 @@
 				{
 					"listen": "prerequest",
 					"script": {
-						"id": "ac38d91f-e789-4834-aee4-5ee3816ce2d5",
 						"exec": [
 							"let random = +new Date();",
 							"",
@@ -19,19 +19,18 @@
 							"let last_name = `${random}-last`",
 							"let full_name = `${random}-full`",
 							"",
-							"pm.globals.set(\"random_val\", random);",
 							"pm.globals.set(\"first_name\", first_name);",
 							"pm.globals.set(\"last_name\", last_name);",
 							"pm.globals.set(\"full_name\", full_name);",
 							"pm.globals.set(\"user_name\", random);"
 						],
-						"type": "text/javascript"
+						"type": "text/javascript",
+						"packages": {}
 					}
 				},
 				{
 					"listen": "test",
 					"script": {
-						"id": "63ea8d66-94a4-4703-86e3-2f1626d80b4b",
 						"exec": [
 							"pm.test(\"User creation was successful\", function () {",
 							"  pm.expect(pm.response.code).to.be.oneOf([200]);",
@@ -48,10 +47,11 @@
 							"    pm.globals.set(\"user_id\", user_id);",
 							"}",
 							"",
-							"postman.setNextRequest('Get User')",
+							"// postman.setNextRequest('Get User')",
 							""
 						],
-						"type": "text/javascript"
+						"type": "text/javascript",
+						"packages": {}
 					}
 				}
 			],
@@ -84,12 +84,52 @@
 			"response": []
 		},
 		{
+			"name": "Get User",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// postman.setNextRequest('Update User')"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": []
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/v1/users/{{user_id}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"v1",
+						"users",
+						"{{user_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Update User",
 			"event": [
 				{
 					"listen": "prerequest",
 					"script": {
-						"id": "74cd4698-084e-4c95-916f-60197eca7f9f",
 						"exec": [
 							"let random = +new Date();",
 							"",
@@ -109,7 +149,6 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "6f7e224c-7940-4737-8df3-60640fd49801",
 						"exec": [
 							"pm.test(\"User Updated successful\", function () {",
 							"  pm.expect(pm.response.code).to.be.oneOf([200]);",
@@ -148,41 +187,6 @@
 				}
 			},
 			"response": []
-		},
-		{
-			"name": "Get User",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
-			"request": {
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"first_name\": \"LN\",\n    \"last_name\": \"J\",\n    \"full_name\": \"LN J\",\n    \"user_name\": \"JLN\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://localhost:8081/api/v1/users/{{user_id}}",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8081",
-					"path": [
-						"api",
-						"v1",
-						"users",
-						"{{user_id}}"
-					]
-				}
-			},
-			"response": []
 		}
-	],
-	"protocolProfileBehavior": {}
+	]
 }
