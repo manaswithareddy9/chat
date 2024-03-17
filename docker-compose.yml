@@ -1,5 +1,9 @@
 version: "2"
 
+networks:
+  k6:
+  grafana:
+
 services:
   db:
     image: "postgres:13.1-alpine"
@@ -14,3 +18,63 @@ services:
       test: ["CMD-SHELL", "pg_isready"]
       interval: 10s
       retries: 5
+
+  influxdb:
+    image: influxdb:1.8
+    container_name: influxdb
+    networks:
+      - k6
+      - grafana
+    ports:
+      - "8086:8086"
+    volumes:
+      - influxdb-storage:/var/lib/influxdb
+    environment:
+      - INFLUXDB_DB=k6
+
+  chronograf:
+    image: chronograf:latest
+    container_name: chronograf
+    ports:
+      - "127.0.0.1:8888:8888"
+    volumes:
+      - chronograf-storage:/var/lib/chronograf
+    depends_on:
+      - influxdb
+    environment:
+      - INFLUXDB_URL=http://influxdb:8086
+
+  grafana:
+    image: grafana/grafana:9.3.8
+    container_name: grafana
+    networks:
+      - grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
+      - ./grafana/grafana-dashboard.yaml:/etc/grafana/provisioning/dashboards/dashboard.yaml
+      - ./grafana/grafana-datasource.yaml:/etc/grafana/provisioning/datasources/datasource.yaml
+      - grafana-storage:/var/lib/grafana
+    environment:
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_BASIC_ENABLED=false
+      - GF_SERVER_SERVE_FROM_SUB_PATH=true
+
+  k6:
+    image: grafana/k6:latest
+    container_name: k6
+    networks:
+      - k6
+    ports:
+      - "6565:6565"
+    environment:
+      - K6_OUT=influxdb=http://influxdb:8086/k6
+    volumes:
+      - ./scripts:/scripts
+
+volumes:
+  influxdb-storage:
+  chronograf-storage:
+  grafana-storage:

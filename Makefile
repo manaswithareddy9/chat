@@ -28,3 +28,6 @@ docker-run:
 # Clean up built artifacts
 clean:
 		mvn clean
+	
+k6-load-test: 
+		docker-compose run k6 run /scripts/ewoks.js
