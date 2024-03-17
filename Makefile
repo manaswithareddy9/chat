@@ -23,7 +23,7 @@ docker-build: compose
 
 # Run the Docker container
 docker-run:
-		docker run -p 8080:8080 $(DOCKER_IMAGE_NAME)
+		docker run -p 8081:8081 $(DOCKER_IMAGE_NAME)
 
 # Clean up built artifacts
 clean:

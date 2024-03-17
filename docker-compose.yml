@@ -5,6 +5,22 @@ networks:
   grafana:
 
 services:
+  web:
+    build: .
+    container_name: web
+    ports:
+      - "8081:8081"
+    restart: always
+    depends_on:
+      - db
+    environment:
+      - spring.datasource.url=jdbc:postgresql://db:5432/docker-chat-db
+      - spring.datasource.username=postgres
+      - spring.datasource.password=admin
+      - spring.jpa.hibernate.ddl-auto=update
+      - spring.jpa.show-sql=true
+      - server.port = 8081
+
   db:
     image: "postgres:13.1-alpine"
     container_name: db
