@@ -3,6 +3,7 @@ version: "2"
 networks:
   k6:
   grafana:
+  external_network:
 
 services:
   web:
@@ -41,30 +42,22 @@ services:
     networks:
       - k6
       - grafana
+      - external_network
     ports:
       - "8086:8086"
+      - "8088:8088"
     volumes:
       - influxdb-storage:/var/lib/influxdb
     environment:
       - INFLUXDB_DB=k6
-
-  chronograf:
-    image: chronograf:latest
-    container_name: chronograf
-    ports:
-      - "127.0.0.1:8888:8888"
-    volumes:
-      - chronograf-storage:/var/lib/chronograf
-    depends_on:
-      - influxdb
-    environment:
-      - INFLUXDB_URL=http://influxdb:8086
+    restart: always
 
   grafana:
     image: grafana/grafana:9.3.8
     container_name: grafana
     networks:
       - grafana
+      - external_network
     ports:
       - "3000:3000"
     volumes:

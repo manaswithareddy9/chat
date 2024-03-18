@@ -30,4 +30,4 @@ clean:
 		mvn clean
 	
 k6-load-test: 
-		docker-compose run k6 run /scripts/ewoks.js
+		docker-compose run k6 run /scripts/loadtest.js -e TARGET_VUS=50
