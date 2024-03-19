@@ -1,4 +1,4 @@
-package com.manaswitha.chat.user;
+package com.angelos.chat.user;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity; // Import the Entity class
