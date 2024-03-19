@@ -1,11 +1,17 @@
-FROM eclipse-temurin:17-jdk-alpine
+FROM techiescamp/jdk-17:1.0.0 AS build
+
+# Copy the Java Application source code
+COPY . /usr/chat/
+
+# Build Java Application
+RUN mvn -f /usr/chat/pom.xml package -DskipTests
+
+FROM techiescamp/jdk-17:1.0.0 
 
 # Set the working directory inside the container
 WORKDIR /app
 
-ARG JAR_FILE=*.jar
-# Copy the packaged JAR file into the container
-COPY target/${JAR_FILE} /app/chat-app.jar
+# Copy the JAR file from the build stage (/app)
+COPY --from=build /usr/chat/target/*.jar ./chat.jar
 
-
-ENTRYPOINT ["java", "-jar", "chat-app.jar"]
+CMD ["java", "-jar", "chat.jar"]

@@ -7,6 +7,7 @@ DOCKER_IMAGE_NAME = chat-app-image
 docker-clean:
 		docker stop $$(docker ps -aq)
 		docker rm $$(docker ps -aq)
+		docker rmi chat-web
 
 # Note: This will remove all Docker images from your local machine
 docker-clean-images:
@@ -18,8 +19,7 @@ compose:
 
 # Build the Docker image
 docker-build: compose
-		mvn clean package flyway:migrate -X 
-		docker build -t $(DOCKER_IMAGE_NAME) .
+		mvn clean package flyway:migrate -X
 
 # Run the Docker container
 docker-run:
@@ -30,4 +30,4 @@ clean:
 		mvn clean
 	
 k6-load-test: 
-		docker-compose run k6 run /scripts/loadtest.js -e TARGET_VUS=50
+		docker-compose run k6 run /scripts/loadtest.js -e TARGET_VUS=5

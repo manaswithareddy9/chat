@@ -83,6 +83,17 @@ services:
     volumes:
       - ./scripts:/scripts
 
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    networks:
+      - grafana
+      - external_network
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+
 volumes:
   influxdb-storage:
   chronograf-storage:
