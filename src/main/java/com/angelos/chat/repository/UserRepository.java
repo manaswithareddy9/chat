@@ -1,11 +1,11 @@
-package com.manaswitha.chat.repository;
+package com.angelos.chat.repository;
 
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.manaswitha.chat.entity.User;
+import com.angelos.chat.entity.User;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {

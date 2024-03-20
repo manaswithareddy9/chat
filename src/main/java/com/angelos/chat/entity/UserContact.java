@@ -1,4 +1,4 @@
-package com.manaswitha.chat.entity;
+package com.angelos.chat.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -19,27 +19,25 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
-@Table(name = "chats")
-public class Chat {
+@Table(name = "user_contacts")
+public class UserContact {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
-	@JoinColumn(name = "from_user_contact_id", nullable = false)
+	@JoinColumn(name = "user_id", nullable = false)
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	@JsonIgnore
-	private UserContact fromUserContact;
+	private User user;
 
-	@ManyToOne(fetch = FetchType.LAZY, optional = false)
-	@JoinColumn(name = "to_user_contact_id", nullable = false)
-	@OnDelete(action = OnDeleteAction.CASCADE)
-	@JsonIgnore
-	private UserContact toUserContact;
+	@Column(name = "phone_number", nullable = false)
+	@JsonProperty("phone_number")
+	private String phoneNumber;
 
-	@Column(name = "text", nullable = false)
-	@JsonProperty("text")
-	private String text;
+	@Column(name = "email_id", nullable = false)
+	@JsonProperty("email_id")
+	private String emailId;
 
 	@Column(name = "created_at", nullable = false)
 	private Date createdAt;
@@ -47,15 +45,15 @@ public class Chat {
 	@Column(name = "updated_at", nullable = false)
 	private Date updatedAt;
 
-	public Chat() {
+	public UserContact() {
 		this.createdAt = new Date();
 		this.updatedAt = new Date();
 	}
 
-	public Chat(UserContact fromUserContact, UserContact toUserContact, String text) {
-		this.fromUserContact = fromUserContact;
-		this.toUserContact = toUserContact;
-		this.text = text;
+	public UserContact(User user, String phoneNumber, String emailId) {
+		this.user = user;
+		this.phoneNumber = phoneNumber;
+		this.emailId = emailId;
 		this.createdAt = new Date();
 		this.updatedAt = new Date();
 	}
@@ -68,28 +66,28 @@ public class Chat {
 		this.id = id;
 	}
 
-	public UserContact getFromUserContact() {
-		return fromUserContact;
+	public User getUser() {
+		return user;
 	}
 
-	public void setFromUserContact(UserContact fromUserContact) {
-		this.fromUserContact = fromUserContact;
+	public void setUser(User user) {
+		this.user = user;
 	}
 
-	public UserContact getToUserContact() {
-		return toUserContact;
+	public String getPhoneNumber() {
+		return phoneNumber;
 	}
 
-	public void setToUserContact(UserContact toUserContact) {
-		this.toUserContact = toUserContact;
+	public void setPhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
 	}
 
-	public String getText() {
-		return text;
+	public String getEmailId() {
+		return emailId;
 	}
 
-	public void setText(String text) {
-		this.text = text;
+	public void setEmailId(String emailId) {
+		this.emailId = emailId;
 	}
 
 	public Date getCreatedAt() {
@@ -110,7 +108,7 @@ public class Chat {
 
 	@Override
 	public String toString() {
-		return "Chat [fromUserContact=" + fromUserContact + ", toUserContact=" + toUserContact + ", text=" + text + "]";
+		return "UserContacts [phone_number=" + phoneNumber + ", email_id=" + emailId + "]";
 	}
 
 }

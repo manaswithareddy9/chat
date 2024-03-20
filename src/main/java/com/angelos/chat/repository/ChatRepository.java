@@ -1,4 +1,4 @@
-package com.manaswitha.chat.repository;
+package com.angelos.chat.repository;
 
 import java.util.List;
 
@@ -6,13 +6,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.manaswitha.chat.entity.Chat;
-import com.manaswitha.chat.model.ChatModel;
+import com.angelos.chat.entity.Chat;
 
 @Repository
 @Transactional
 public interface ChatRepository extends JpaRepository<Chat, Long> {
-    List<ChatModel> findChatByFromUserContactId(Long fromUserContactId);
+    List<Chat> findChatByFromUserContactId(Long fromUserContactId);
 
-    List<ChatModel> deleteByFromUserContactId(Long fromUserContactId);
+    List<Chat> deleteByFromUserContactId(Long fromUserContactId);
 }

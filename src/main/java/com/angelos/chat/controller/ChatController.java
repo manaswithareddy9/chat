@@ -1,4 +1,4 @@
-package com.manaswitha.chat.controller;
+package com.angelos.chat.controller;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -18,12 +18,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.manaswitha.chat.ResourceNotFoundException;
-import com.manaswitha.chat.entity.Chat;
-import com.manaswitha.chat.entity.UserContact;
-import com.manaswitha.chat.model.ChatModel;
-import com.manaswitha.chat.repository.ChatRepository;
-import com.manaswitha.chat.repository.UserContactRepository;
+import com.angelos.chat.ResourceNotFoundException;
+import com.angelos.chat.entity.Chat;
+import com.angelos.chat.entity.UserContact;
+import com.angelos.chat.model.ChatModel;
+import com.angelos.chat.repository.ChatRepository;
+import com.angelos.chat.repository.UserContactRepository;
+
 import jakarta.validation.Valid;
 
 @CrossOrigin(origins = "http://localhost:8081")
@@ -35,36 +36,6 @@ public class ChatController {
 
 	@Autowired
 	private UserContactRepository userContactRepository;
-
-	// to do: query param tpo fetch cpontacts by userid
-
-	@GetMapping("/chats")
-	public List<Chat> getAllUserChats() {
-		return chatRepository.findAll();
-	}
-
-	@GetMapping("/userContacts/{fromUserContactId}/chats")
-	public ResponseEntity<List<ChatModel>> getChatsByFromUserContactId(
-			@PathVariable(value = "fromUserContactId") long fromUserContactId)
-			throws ResourceNotFoundException {
-		userContactRepository.findById(fromUserContactId)
-				.orElseThrow(() -> new ResourceNotFoundException(
-						"UserContacts not found from this id :: " + fromUserContactId));
-		List<ChatModel> chats = chatRepository.findChatByFromUserContactId(fromUserContactId);
-		return new ResponseEntity<>(chats, HttpStatus.OK);
-
-	}
-
-	@GetMapping("/chats/{id}")
-	public ResponseEntity<ChatModel> getChatById(@PathVariable(value = "id") long id)
-			throws ResourceNotFoundException {
-		Chat chat = chatRepository.findById(id)
-				.orElseThrow(() -> new ResourceNotFoundException("Chat not found for this id :: " + id));
-		ChatModel chatModel = new ChatModel(id,
-				chat.getFromUserContact().getId(), chat.getToUserContact().getId(), chat.getText(), chat.getCreatedAt(),
-				chat.getUpdatedAt());
-		return new ResponseEntity<>(chatModel, HttpStatus.OK);
-	}
 
 	@PostMapping("/chats")
 	public ResponseEntity<ChatModel> createUserChat(@RequestBody ChatModel chatRequest)
@@ -84,20 +55,50 @@ public class ChatController {
 		return new ResponseEntity<>(chatModel, HttpStatus.CREATED);
 	}
 
+	// TODO: query param to fetch contacts by userid
+	@GetMapping("/chats")
+	public List<Chat> getAllUserChats() {
+		return chatRepository.findAll();
+	}
+
+	@GetMapping("/userContacts/{fromUserContactId}/chats")
+	public ResponseEntity<List<ChatModel>> getChatsByFromUserContactId(
+			@PathVariable(value = "fromUserContactId") long fromUserContactId)
+			throws ResourceNotFoundException {
+		userContactRepository.findById(fromUserContactId)
+				.orElseThrow(() -> new ResourceNotFoundException(
+						"UserContacts not found from this id :: " + fromUserContactId));
+		List<ChatModel> chats = chatRepository.findChatByFromUserContactId(fromUserContactId).stream()
+				.map(chat -> {
+					return new ChatModel(chat.getId(), chat.getFromUserContact().getId(),
+							chat.getToUserContact().getId(), chat.getText(), chat.getCreatedAt(),
+							chat.getUpdatedAt());
+				}).toList();
+		return new ResponseEntity<>(chats, HttpStatus.OK);
+	}
+
+	@GetMapping("/chats/{id}")
+	public ResponseEntity<ChatModel> getChatById(@PathVariable(value = "id") long id)
+			throws ResourceNotFoundException {
+		Chat chat = chatRepository.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("Chat not found for this id :: " + id));
+		ChatModel chatModel = new ChatModel(id,
+				chat.getFromUserContact().getId(), chat.getToUserContact().getId(), chat.getText(), chat.getCreatedAt(),
+				chat.getUpdatedAt());
+		return new ResponseEntity<>(chatModel, HttpStatus.OK);
+	}
+
 	@PutMapping("/chats/{id}")
 	public ResponseEntity<ChatModel> updateChat(@PathVariable(value = "id") long chatId,
 			@Valid @RequestBody ChatModel chatRequest) throws ResourceNotFoundException {
-		Chat chats = chatRepository.findById(chatId).stream().findFirst()
+		Chat chat = chatRepository.findById(chatId).stream().findFirst()
 				.orElseThrow(() -> new ResourceNotFoundException(
 						"Chat not found for this Id :: " + chatId));
+		// we will update chat text & updatedAt
+		chat.setText(chatRequest.getText());
+		chat.setUpdatedAt(new Date());
 
-		chats.setId(chatRequest.getId());
-		// chats.setFromUserContact(chatDetails.getFromUserContactId());
-		// chats.setToUserContact(chatDetails.getToUserContactId());
-		chats.setText(chatRequest.getText());
-		chats.setUpdatedAt(new Date());
-
-		final Chat updatedChat = chatRepository.save(chats);
+		final Chat updatedChat = chatRepository.save(chat);
 		ChatModel chatModel = new ChatModel(updatedChat.getId(), updatedChat.getFromUserContact().getId(),
 				updatedChat.getToUserContact().getId(), updatedChat.getText(), updatedChat.getCreatedAt(),
 				updatedChat.getUpdatedAt());

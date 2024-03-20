@@ -1,9 +1,10 @@
-package com.manaswitha.chat.controller;
+package com.angelos.chat.controller;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,11 +19,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.manaswitha.chat.ResourceNotFoundException;
-import com.manaswitha.chat.entity.UserContact;
-import com.manaswitha.chat.model.UserContactModel;
-import com.manaswitha.chat.repository.UserContactRepository;
-import com.manaswitha.chat.repository.UserRepository;
+import com.angelos.chat.ResourceNotFoundException;
+import com.angelos.chat.entity.User;
+import com.angelos.chat.entity.UserContact;
+import com.angelos.chat.model.UserContactModel;
+import com.angelos.chat.repository.UserContactRepository;
+import com.angelos.chat.repository.UserRepository;
 
 import jakarta.validation.Valid;
 
@@ -36,21 +38,30 @@ public class UserContactController {
 	@Autowired
 	private UserRepository userRepository;
 
-	// to do: query param tpo fetch cpontacts by userid
-
-	@GetMapping("/userContacts")
-	public List<UserContact> getAllUserContacts() {
-		return userContactRepository.findAll();
+	@PostMapping("/users/{userId}/userContacts")
+	public ResponseEntity<UserContactModel> createUserContact(@PathVariable(value = "userId") long userId,
+			@RequestBody UserContactModel userContactRequest) throws ResourceNotFoundException {
+		User user = userRepository.findById(userId)
+				.orElseThrow(() -> new ResourceNotFoundException("No user found with id = " + userId));
+		UserContact userContact = userContactRepository.save(new UserContact(user, userContactRequest.getPhoneNumber(),
+				userContactRequest.getEmailId()));
+		UserContactModel userContactModel = new UserContactModel(userContact.getId(), userId,
+				userContact.getPhoneNumber(), userContact.getEmailId(), userContact.getCreatedAt(),
+				userContact.getUpdatedAt());
+		return new ResponseEntity<>(userContactModel, HttpStatus.CREATED);
 	}
 
 	@GetMapping("/users/{userId}/userContacts")
-	public ResponseEntity<List<UserContact>> getUserContactsByUserId(@PathVariable(value = "userId") long userId)
+	public ResponseEntity<List<UserContactModel>> getUserContactsByUserId(@PathVariable(value = "userId") long userId)
 			throws ResourceNotFoundException {
 		userRepository.findById(userId)
 				.orElseThrow(() -> new ResourceNotFoundException("User not found for this id :: " + userId));
-		List<UserContact> contacts = userContactRepository.findUserContactByUserId(userId);
+		List<UserContactModel> contacts = userContactRepository.findUserContactByUserId(userId).stream()
+				.map(userContact -> {
+					return new UserContactModel(userContact.getId(), userId, userContact.getPhoneNumber(),
+							userContact.getEmailId(), userContact.getCreatedAt(), userContact.getUpdatedAt());
+				}).collect(Collectors.toList());
 		return new ResponseEntity<>(contacts, HttpStatus.OK);
-
 	}
 
 	@GetMapping("/userContacts/{id}")
@@ -64,27 +75,14 @@ public class UserContactController {
 		return new ResponseEntity<>(userContactModel, HttpStatus.OK);
 	}
 
-	@PostMapping("/users/{userId}/userContacts")
-	public ResponseEntity<UserContactModel> createUserContact(@PathVariable(value = "userId") Long userId,
-			@RequestBody UserContact userContactRequest) throws ResourceNotFoundException {
-		UserContact userContact = userRepository.findById(userId).map(user -> {
-			userContactRequest.setUser(user);
-			return userContactRepository.save(userContactRequest);
-		}).orElseThrow(() -> new ResourceNotFoundException("No user found with id = " + userId));
-		UserContactModel userContactModel = new UserContactModel(userContact.getUser().getId(), userId,
-				userContact.getPhoneNumber(), userContact.getEmailId(), userContact.getCreatedAt(),
-				userContact.getUpdatedAt());
-		return new ResponseEntity<>(userContactModel, HttpStatus.CREATED);
-	}
-
 	@PutMapping("/userContacts/{id}")
 	public ResponseEntity<UserContactModel> updateUserContact(@PathVariable(value = "id") long userContactId,
-			@Valid @RequestBody UserContact userContactDetails) throws ResourceNotFoundException {
+			@Valid @RequestBody UserContactModel userContactRequest) throws ResourceNotFoundException {
 		UserContact userContacts = userContactRepository.findById(userContactId).stream().findFirst()
 				.orElseThrow(() -> new ResourceNotFoundException(
 						"UserContact not found for this userContactId :: " + userContactId));
-		userContacts.setPhoneNumber(userContactDetails.getPhoneNumber());
-		userContacts.setEmailId(userContactDetails.getEmailId());
+		userContacts.setPhoneNumber(userContactRequest.getPhoneNumber());
+		userContacts.setEmailId(userContactRequest.getEmailId());
 		userContacts.setUpdatedAt(new Date());
 		final UserContact updatedUserContact = userContactRepository.save(userContacts);
 		UserContactModel userContactModel = new UserContactModel(userContactId, updatedUserContact.getUser().getId(),

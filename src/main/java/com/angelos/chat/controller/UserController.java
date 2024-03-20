@@ -1,4 +1,4 @@
-package com.manaswitha.chat.controller;
+package com.angelos.chat.controller;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -18,9 +18,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.manaswitha.chat.ResourceNotFoundException;
-import com.manaswitha.chat.entity.User;
-import com.manaswitha.chat.repository.UserRepository;
+import com.angelos.chat.ResourceNotFoundException;
+import com.angelos.chat.entity.User;
+import com.angelos.chat.repository.UserRepository;
 
 import jakarta.validation.Valid;
 
@@ -76,20 +76,5 @@ public class UserController {
 		response.put("deleted", Boolean.TRUE);
 		return response;
 	}
-
-	// To Do: query param to fetch users by userName
-	// @GetMapping("/users/{userName}")
-	// public ResponseEntity<User> getUserByUserName(@PathVariable(value =
-	// "userName") String userName)
-	// throws ResourceNotFoundException {
-	// Optional<User> user =
-	// userRepository.findByUserNameContaining(userName).stream().findFirst();
-	// if (user.isPresent()) {
-	// return new ResponseEntity<>(user.get(), HttpStatus.OK);
-	// } else {
-	// throw new ResourceNotFoundException("User not found with this userName :: " +
-	// userName);
-	// }
-	// }
 
 }

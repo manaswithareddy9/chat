@@ -1,4 +1,4 @@
-package com.manaswitha.chat;
+package com.angelos.chat;
 
 import java.util.Date;
 
