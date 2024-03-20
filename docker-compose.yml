@@ -1,6 +1,27 @@
 version: "2"
 
+networks:
+  k6:
+  grafana:
+  external_network:
+
 services:
+  web:
+    build: .
+    container_name: web
+    ports:
+      - "8081:8081"
+    restart: always
+    depends_on:
+      - db
+    environment:
+      - spring.datasource.url=jdbc:postgresql://db:5432/docker-chat-db
+      - spring.datasource.username=postgres
+      - spring.datasource.password=admin
+      - spring.jpa.hibernate.ddl-auto=update
+      - spring.jpa.show-sql=true
+      - server.port = 8081
+
   db:
     image: "postgres:13.1-alpine"
     container_name: db
@@ -14,3 +35,66 @@ services:
       test: ["CMD-SHELL", "pg_isready"]
       interval: 10s
       retries: 5
+
+  influxdb:
+    image: influxdb:1.8
+    container_name: influxdb
+    networks:
+      - k6
+      - grafana
+      - external_network
+    ports:
+      - "8086:8086"
+      - "8088:8088"
+    volumes:
+      - influxdb-storage:/var/lib/influxdb
+    environment:
+      - INFLUXDB_DB=k6
+    restart: always
+
+  grafana:
+    image: grafana/grafana:9.3.8
+    container_name: grafana
+    networks:
+      - grafana
+      - external_network
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
+      - ./grafana/grafana-dashboard.yaml:/etc/grafana/provisioning/dashboards/dashboard.yaml
+      - ./grafana/grafana-datasource.yaml:/etc/grafana/provisioning/datasources/datasource.yaml
+      - grafana-storage:/var/lib/grafana
+    environment:
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_BASIC_ENABLED=false
+      - GF_SERVER_SERVE_FROM_SUB_PATH=true
+
+  k6:
+    image: grafana/k6:latest
+    container_name: k6
+    networks:
+      - k6
+    ports:
+      - "6565:6565"
+    environment:
+      - K6_OUT=influxdb=http://influxdb:8086/k6
+    volumes:
+      - ./scripts:/scripts
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    networks:
+      - grafana
+      - external_network
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+
+volumes:
+  influxdb-storage:
+  chronograf-storage:
+  grafana-storage:

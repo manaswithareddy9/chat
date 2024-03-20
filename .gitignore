@@ -31,3 +31,6 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### influx stuff ###
+influxdb-data/
