@@ -1,4 +1,4 @@
-package com.angelos.chat.user;
+package com.angelos.chat.controller;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -6,7 +6,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,9 +19,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.angelos.chat.ResourceNotFoundException;
+import com.angelos.chat.entity.User;
+import com.angelos.chat.repository.UserRepository;
 
 import jakarta.validation.Valid;
 
+@CrossOrigin(origins = "http://localhost:8081")
 @RestController
 @RequestMapping("/api/v1")
 public class UserController {
@@ -32,16 +37,17 @@ public class UserController {
 	}
 
 	@GetMapping("/users/{id}")
-	public ResponseEntity<User> getUserById(@PathVariable(value = "id") long userId)
-			throws ResourceNotFoundException {
+	public ResponseEntity<User> getUserById(@PathVariable(value = "id") long userId) throws ResourceNotFoundException {
 		User user = userRepository.findById(userId)
 				.orElseThrow(() -> new ResourceNotFoundException("User not found for this id :: " + userId));
-		return ResponseEntity.ok().body(user);
+		return new ResponseEntity<>(user, HttpStatus.OK);
 	}
 
 	@PostMapping("/users")
-	public User createUser(@Valid @RequestBody User user) {
-		return userRepository.save(user);
+	public ResponseEntity<User> createUser(@Valid @RequestBody User user) {
+		User users = userRepository
+				.save(user);
+		return new ResponseEntity<>(users, HttpStatus.CREATED);
 	}
 
 	@PutMapping("/users/{id}")

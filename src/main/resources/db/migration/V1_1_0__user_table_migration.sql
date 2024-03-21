@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS users
     CONSTRAINT users_pkey PRIMARY KEY (id),
     CONSTRAINT uk_users_user_name UNIQUE (user_name)
 );
+
 INSERT INTO users(
 	created_at, first_name, full_name, last_name, updated_at, user_name)
 	VALUES 
@@ -17,6 +18,5 @@ INSERT INTO users(
 	(CURRENT_TIMESTAMP, 'first2', 'first2 last2', 'last2', CURRENT_TIMESTAMP, 'first2.last2'),
 	(CURRENT_TIMESTAMP, 'first3', 'first3 last3', 'last3', CURRENT_TIMESTAMP, 'first3.last3'),
 	(CURRENT_TIMESTAMP, 'first4', 'first4 last4', 'last4', CURRENT_TIMESTAMP, 'first4.last4'),
-	(CURRENT_TIMESTAMP, 'first5', 'first5 last5', 'last5', CURRENT_TIMESTAMP, 'first5.last5')
-;
+	(CURRENT_TIMESTAMP, 'first5', 'first5 last5', 'last5', CURRENT_TIMESTAMP, 'first5.last5');
 

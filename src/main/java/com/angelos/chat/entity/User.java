@@ -1,11 +1,11 @@
-package com.angelos.chat.user;
+package com.angelos.chat.entity;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.Entity; // Import the Entity class
+import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Table;
-import jakarta.persistence.Id; // Import the Id class
+import jakarta.persistence.Id;
 import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -49,6 +49,8 @@ public class User {
 		this.lastName = lastName;
 		this.fullName = fullName;
 		this.userName = userName;
+		this.createdAt = new Date();
+		this.updatedAt = new Date();
 	}
 
 	public long getId() {
