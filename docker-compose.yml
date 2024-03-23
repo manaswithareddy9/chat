@@ -8,7 +8,7 @@ networks:
 services:
   web:
     build: .
-    container_name: web
+    container_name: chat-web
     ports:
       - "8081:8081"
     restart: always
@@ -93,6 +93,21 @@ services:
       - "9090:9090"
     volumes:
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+
+  wiremock:
+    image: "wiremock/wiremock:latest"
+    container_name: wiremock
+    ports:
+      - "8383:8080"
+    volumes:
+      - ./wiremock:/home/wiremock
+    entrypoint:
+      [
+        "/docker-entrypoint.sh",
+        "--global-response-templating",
+        "--disable-gzip",
+        "--verbose",
+      ]
 
 volumes:
   influxdb-storage:
